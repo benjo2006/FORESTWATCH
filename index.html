@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORESTWATCH // Deforestation Early Warning System</title>
+  <meta name="description" content="AI & Satellite Powered Deforestation Early Warning System. Observe, Detect, Explain, Prioritize, and Protect vulnerable forest ecosystems.">
+  
+  <!-- Favicon / Icon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300f59b'><path d='M12 2L4 12h3v8h10v-8h3L12 2z'/></svg>" type="image/svg+xml">
+
+  <!-- Google Fonts: Exo, Outfit, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS for Geospatial Mapping -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js for High-Precision Environmental Trends -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+
+  <!-- TOP BREAKING NEWS & ALERT TICKER (Cutoshi-Inspired Header) -->
+  <header class="breaking-banner" id="top-ticker">
+    <div class="breaking-badge">
+      <span class="pulse-dot red"></span>
+      <span class="badge-text">EARLY WARNING LIVE</span>
+    </div>
+    <div class="ticker-content-wrapper">
+      <div class="ticker-scroll" id="ticker-scroll">
+        <span class="ticker-item">🔴 <strong>CRITICAL DISTURBANCE:</strong> 342.8 ha canopy loss flagged in <em>Silent Valley Buffer, Western Ghats</em> (ΔNDVI -47.4%)</span>
+        <span class="ticker-divider">•</span>
+        <span class="ticker-item">🛰️ <strong>SENTINEL-2 PASS:</strong> Fresh multispectral pass completed 14 mins ago across Southern India Corridor</span>
+        <span class="ticker-divider">•</span>
+        <span class="ticker-item">🟡 <strong>EMERGING ANOMALY:</strong> Linear access road disturbance detected in <em>Kudremukh Foothills</em> (Confidence 88%)</span>
+        <span class="ticker-divider">•</span>
+        <span class="ticker-item">⚡ <strong>ACTION DISPATCH:</strong> Automated GeoJSON boundary transmitted to Kerala & Karnataka Forest Vigilance Wings</span>
+      </div>
+    </div>
+    <div class="ticker-actions">
+      <button class="btn-ticker-sound" id="btn-sound-toggle" title="Toggle Environmental Audio Feedback">
+        <i data-lucide="volume-2" class="icon-sm"></i>
+        <span>AUDIO ON</span>
+      </button>
+      <div class="status-indicator">
+        <span class="live-blink"></span>
+        <span>SYSTEM OPERATIONAL</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN NAVIGATION BAR (Cutoshi Neo-Nature Brutalist Style) -->
+  <nav class="main-navbar">
+    <div class="nav-container">
+      <a href="#" class="brand-logo">
+        <div class="logo-icon-box">
+          <svg class="tree-radar-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="14" stroke="#00f59b" stroke-width="2" stroke-dasharray="3 3" opacity="0.6"/>
+            <circle cx="16" cy="16" r="9" stroke="#10b981" stroke-width="1.5" opacity="0.8"/>
+            <path d="M16 4L9 15h4v6h-3v5h12v-5h-3v-6h4L16 4z" fill="#00f59b"/>
+            <circle cx="16" cy="16" r="2.5" fill="#f6ca56"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">FOREST<span class="highlight">WATCH</span></span>
+          <span class="brand-sub">EARLY DEFORESTATION WARNING SYSTEM</span>
+        </div>
+      </a>
+
+      <!-- Quick Nav Links -->
+      <div class="nav-menu">
+        <a href="#map-section" class="nav-link active"><i data-lucide="map-pin"></i> Live Map</a>
+        <a href="#comparator-section" class="nav-link"><i data-lucide="split"></i> Before/After</a>
+        <a href="#intelligence-section" class="nav-link"><i data-lucide="activity"></i> Multi-Signal Engine</a>
+        <a href="#timeline-section" class="nav-link"><i data-lucide="clock"></i> Temporal Trends</a>
+        <a href="#ai-section" class="nav-link"><i data-lucide="cpu"></i> AI Explanation</a>
+        <a href="#action-section" class="nav-link"><i data-lucide="shield-alert"></i> Action Protocols</a>
+      </div>
+
+      <!-- Header Action Buttons -->
+      <div class="nav-cta-wrap">
+        <button class="btn-cutoshi btn-primary" id="btn-export-report" aria-label="Export executive briefing report">
+          <div class="btn-bg-glow"></div>
+          <i data-lucide="file-text"></i>
+          <span>EXPORT BRIEFING</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO / MISSION HEADER SECTION -->
+  <section class="hero-section">
+    <div class="hero-backdrop-glow"></div>
+    <div class="container hero-container">
+      <div class="hero-tag-wrap">
+        <div class="hero-tag">
+          <span class="tag-star">✦</span>
+          <span>AUTONOMOUS PLANETARY SATELLITE INTELLIGENCE</span>
+          <span class="tag-star">✦</span>
+        </div>
+      </div>
+      <h1 class="hero-heading">
+        TURNING SATELLITE SIGNALS INTO <br>
+        <span class="text-gradient">EARLY INTERVENTION ALERTS.</span>
+      </h1>
+      <p class="hero-subheading">
+        Traditional monitoring registers forest loss after clear-cutting is complete. ForestWatch monitors multispectral vegetation shifts, eliminates false positives through cross-index synthesis (NDVI, NBR, NDWI, SAR), and detects emerging canopy disturbances weeks before catastrophic loss.
+      </p>
+
+      <!-- Key Telemetry Cards Bar (Cutoshi Tab Window Style) -->
+      <div class="hero-stats-grid">
+        <div class="stat-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">FOREST MONITORED</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-num" id="stat-monitored-area">2,418,500 <span class="stat-unit">ha</span></div>
+            <div class="stat-label">Western Ghats & Critical Corridors</div>
+            <div class="stat-badge green">🟢 99.1% Sensor Uptime</div>
+          </div>
+        </div>
+
+        <div class="stat-card urgent">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">ACTIVE HOTSPOTS</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-num text-red" id="stat-hotspot-count">17 <span class="stat-unit">Hotspots</span></div>
+            <div class="stat-label">4 Critical • 7 High • 6 Emerging</div>
+            <div class="stat-badge red">🔴 4 Require Immediate Dispatch</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">FLAGGED AREA</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-num text-amber" id="stat-flagged-area">12,400 <span class="stat-unit">ha</span></div>
+            <div class="stat-label">3.2% Regional Canopy Shift (90d)</div>
+            <div class="stat-badge amber">⚠️ Early Warning Threshold Tripped</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">CARBON AT RISK</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-num text-cyan" id="stat-carbon-risk">842,000 <span class="stat-unit">tCO₂e</span></div>
+            <div class="stat-label">Tropical Rainforest Carbon Biomass</div>
+            <div class="stat-badge cyan">🌳 Habitat Buffer Intercept</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Loop Pill Banner: OBSERVE -> DETECT -> EXPLAIN -> PRIORITIZE -> PROTECT -->
+      <div class="core-loop-banner">
+        <div class="loop-step"><span class="step-num">01</span><span class="step-txt">OBSERVE</span></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step"><span class="step-num">02</span><span class="step-txt">DETECT</span></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step"><span class="step-num">03</span><span class="step-txt">EXPLAIN</span></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step"><span class="step-num">04</span><span class="step-txt">PRIORITIZE</span></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step active"><span class="step-num">05</span><span class="step-txt">PROTECT</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: INTERACTIVE GEOSPATIAL MAP & LIVE HOTSPOT RADAR -->
+  <section class="app-section" id="map-section">
+    <div class="container">
+      
+      <!-- Section Header with Cutoshi Styling -->
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="globe"></i>
+          <span>CORE OBSERVATION DECK</span>
+        </div>
+        <h2 class="section-title">INTERACTIVE SATELLITE RADAR & HOTSPOT DECK</h2>
+        <p class="section-desc">
+          Explore real-time multi-spectral Sentinel-2 and Landsat-9 coverage. Select any flagged anomaly to trigger instantaneous risk decomposition, spectral evidence extraction, and action protocol routing.
+        </p>
+      </div>
+
+      <!-- Map & Sidebar Main Layout Container -->
+      <div class="map-layout-grid">
+        
+        <!-- Left: Interactive Leaflet Geospatial Map Window -->
+        <div class="map-window-card">
+          <div class="card-mac-header map-header">
+            <div class="mac-dots">
+              <span class="mac-dot red"></span>
+              <span class="mac-dot yellow"></span>
+              <span class="mac-dot green"></span>
+            </div>
+            <div class="map-title-bar">
+              <span class="hud-live-tag">● LIVE SATELLITE RADAR</span>
+              <span class="hud-coords" id="hud-coordinates">11.134° N, 76.432° E</span>
+              <span class="hud-zoom" id="hud-zoom-level">ZOOM: 11x</span>
+            </div>
+          </div>
+
+          <!-- Integrated Map Toolbar for Regions & Threat Filters -->
+          <div class="map-subtoolbar">
+            <div class="toolbar-group">
+              <span class="toolbar-label"><i data-lucide="compass" class="icon-xs"></i> REGION:</span>
+              <div class="region-pills-wrap">
+                <button class="region-pill active" data-region="western-ghats" aria-label="Focus on Western Ghats">Western Ghats</button>
+                <button class="region-pill" data-region="sundarbans" aria-label="Focus on Sundarbans Mangrove">Sundarbans</button>
+                <button class="region-pill" data-region="kaziranga" aria-label="Focus on Kaziranga Corridor">Kaziranga</button>
+                <button class="region-pill" data-region="amazon" aria-label="Focus on Amazon Basin">Amazon</button>
+              </div>
+            </div>
+
+            <div class="toolbar-group">
+              <span class="toolbar-label"><i data-lucide="filter" class="icon-xs"></i> THREAT:</span>
+              <div class="map-quick-filters">
+                <button class="btn-map-filter active" data-filter="all" aria-label="Show all hotspots">ALL (17)</button>
+                <button class="btn-map-filter filter-critical" data-filter="critical" aria-label="Show critical hotspots">🔴 CRITICAL (4)</button>
+                <button class="btn-map-filter filter-high" data-filter="high" aria-label="Show high threat hotspots">🟠 HIGH (7)</button>
+                <button class="btn-map-filter filter-emerging" data-filter="emerging" aria-label="Show emerging anomalies">🟡 EMERGING (6)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Container -->
+          <div class="map-canvas-wrapper">
+            <div id="satellite-map" role="region" aria-label="Interactive deforestation radar map"></div>
+
+            <!-- Map Floating Layer Switcher Controls -->
+            <div class="map-layer-controls">
+              <div class="layer-control-title">SPECTRAL LAYERS</div>
+              <button class="layer-btn active" data-layer="true-color" aria-label="True Color RGB layer">
+                <i data-lucide="eye"></i> True Color
+              </button>
+              <button class="layer-btn" data-layer="false-color" aria-label="False Color NIR layer">
+                <i data-lucide="flame"></i> False Color NIR
+              </button>
+              <button class="layer-btn" data-layer="ndvi-heatmap" aria-label="NDVI Heatmap layer">
+                <i data-lucide="layers"></i> NDVI Heatmap
+              </button>
+              <button class="layer-btn" data-layer="loss-mask" aria-label="Disturbance Loss Mask layer">
+                <i data-lucide="alert-triangle"></i> Loss Mask
+              </button>
+            </div>
+
+            <!-- Map Legend -->
+            <div class="map-legend">
+              <div class="legend-item"><span class="legend-dot critical"></span> Critical (&gt;80)</div>
+              <div class="legend-item"><span class="legend-dot high"></span> High (60–80)</div>
+              <div class="legend-item"><span class="legend-dot emerging"></span> Emerging (40–60)</div>
+              <div class="legend-item"><span class="legend-dot stable"></span> Stable Reserve</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Hotspot Inspection & Telemetry Card -->
+        <div class="hotspot-sidebar-card">
+          <div class="card-mac-header">
+            <div class="mac-dots">
+              <span class="mac-dot red"></span>
+              <span class="mac-dot yellow"></span>
+              <span class="mac-dot green"></span>
+            </div>
+            <span class="mac-title" id="selected-hotspot-id-badge">HOTSPOT #04 DETAILS</span>
+            <span class="badge-risk critical" id="selected-hotspot-risk-badge">🔴 CRITICAL</span>
+          </div>
+
+          <div class="hotspot-body" id="hotspot-telemetry-body">
+            
+            <!-- Hotspot Header Info -->
+            <div class="hotspot-main-meta">
+              <div class="hotspot-location-title" id="hotspot-name">Silent Valley Buffer Zone</div>
+              <div class="hotspot-coords-biome" id="hotspot-biome">Western Ghats Wet Evergreen Forest • 11.134° N, 76.432° E</div>
+            </div>
+
+            <!-- Quick Score & Confidence Meter -->
+            <div class="score-confidence-grid">
+              <div class="score-box">
+                <div class="score-label">DEFORESTATION RISK</div>
+                <div class="score-val text-red" id="hotspot-risk-score">87<span class="score-max">/100</span></div>
+                <div class="score-bar-bg"><div class="score-bar-fill red" id="hotspot-risk-bar" style="width: 87%;"></div></div>
+              </div>
+              <div class="score-box">
+                <div class="score-label">DETECTION CONFIDENCE</div>
+                <div class="score-val text-green" id="hotspot-confidence">91<span class="score-max">%</span></div>
+                <div class="score-bar-bg"><div class="score-bar-fill green" id="hotspot-confidence-bar" style="width: 91%;"></div></div>
+              </div>
+            </div>
+
+            <!-- Key Spectral Telemetry Rows -->
+            <div class="telemetry-table">
+              <div class="tele-row">
+                <span class="tele-key"><i data-lucide="trending-down" class="icon-xs text-red"></i> Canopy Cover Delta:</span>
+                <span class="tele-val text-red font-bold" id="hotspot-cover-change">-18.4%</span>
+              </div>
+              <div class="tele-row">
+                <span class="tele-key"><i data-lucide="maximize-2" class="icon-xs"></i> Flagged Disturbance Area:</span>
+                <span class="tele-val font-bold" id="hotspot-area">342.8 Hectares</span>
+              </div>
+              <div class="tele-row">
+                <span class="tele-key"><i data-lucide="calendar" class="icon-xs"></i> Detection Window:</span>
+                <span class="tele-val" id="hotspot-window">June → August 2026</span>
+              </div>
+              <div class="tele-row">
+                <span class="tele-key"><i data-lucide="target" class="icon-xs"></i> Primary Indicator:</span>
+                <span class="tele-val text-amber font-bold" id="hotspot-primary-ind">Severe Canopy Drop & Road Track</span>
+              </div>
+              <div class="tele-row">
+                <span class="tele-key"><i data-lucide="compass" class="icon-xs"></i> Proximity to Reserve Core:</span>
+                <span class="tele-val text-cyan font-bold" id="hotspot-core-prox">1.2 km (Critical Buffer)</span>
+              </div>
+              <div class="tele-row">
+                <span class="tele-key"><i data-lucide="leaf" class="icon-xs"></i> Key Habitat Species:</span>
+                <span class="tele-val" id="hotspot-species">Lion-tailed Macaque, Nilgiri Tahr</span>
+              </div>
+            </div>
+
+            <!-- Quick Action Buttons Inside Hotspot Card -->
+            <div class="hotspot-action-footer">
+              <button class="btn-cutoshi btn-urgent w-100" id="btn-jump-comparator">
+                <i data-lucide="split"></i>
+                <span>INSPECT BEFORE VS AFTER EVIDENCE</span>
+              </button>
+              <button class="btn-cutoshi btn-secondary w-100 mt-2" id="btn-read-ai-summary">
+                <i data-lucide="sparkles"></i>
+                <span>GENERATE AI VERDICT & PROTOCOL</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Hotspot Selector Drawer / Horizontal Carousel -->
+      <div class="hotspot-carousel-wrap">
+        <div class="carousel-title-row">
+          <span class="carousel-heading"><i data-lucide="list-filter"></i> FLAGGED FOREST DISTURBANCE QUEUE (17 REGIONS)</span>
+          <span class="carousel-hint">Click any card to center radar & load full telemetry</span>
+        </div>
+        <div class="hotspot-cards-scroll" id="hotspot-list-scroll">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2: INTERACTIVE BEFORE VS AFTER SATELLITE COMPARATOR -->
+  <section class="app-section section-darker" id="comparator-section">
+    <div class="container">
+      
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="split"></i>
+          <span>EMPIRICAL EVIDENCE ENGINE</span>
+        </div>
+        <h2 class="section-title">BEFORE VS. AFTER SATELLITE COMPARISON</h2>
+        <p class="section-desc">
+          Direct empirical verification. Slide the divider to expose the high-resolution baseline canopy against current multispectral observations. Toggle NDVI difference heatmaps and inspect calculated spectral pixel values in real-time.
+        </p>
+      </div>
+
+      <!-- Comparator Main Frame Card -->
+      <div class="comparator-card">
+        <div class="card-mac-header">
+          <div class="mac-dots">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+          </div>
+          <div class="comparator-header-title">
+            <span>OBSERVATION COMPARISON: <strong id="comp-region-title">Silent Valley Buffer (Zone #04)</strong></span>
+          </div>
+          <div class="comparator-mode-toggles">
+            <button class="comp-mode-btn active" data-mode="truecolor">RGB True Color</button>
+            <button class="comp-mode-btn" data-mode="falsecolor">NIR False Color</button>
+            <button class="comp-mode-btn" data-mode="ndvimask">NDVI Delta Heatmap</button>
+          </div>
+        </div>
+
+        <div class="comparator-body">
+          
+          <!-- Split Slider Canvas Wrapper -->
+          <div class="split-slider-container" id="split-slider-box">
+            
+            <!-- BEFORE LAYER (Left / Base) -->
+            <div class="split-layer layer-before" id="layer-before">
+              <img src="" id="img-before" alt="Historical Baseline Satellite Image" class="comparator-img">
+              <div class="layer-pill before-pill">
+                <span class="pill-title">HISTORICAL BASELINE</span>
+                <span class="pill-date" id="comp-date-before">JUNE 2024 (Dry/Clear Pass)</span>
+                <span class="pill-ndvi" id="comp-ndvi-before">Canopy NDVI: 0.78 (Healthy)</span>
+              </div>
+            </div>
+
+            <!-- AFTER LAYER (Right / Clipped Overlay) -->
+            <div class="split-layer layer-after" id="layer-after">
+              <img src="" id="img-after" alt="Current Disturbance Satellite Image" class="comparator-img">
+              <div class="layer-pill after-pill">
+                <span class="pill-title">CURRENT OBSERVATION</span>
+                <span class="pill-date" id="comp-date-after">AUGUST 2026 (Sentinel-2)</span>
+                <span class="pill-ndvi text-red" id="comp-ndvi-after">Current NDVI: 0.41 (Degraded)</span>
+              </div>
+            </div>
+
+            <!-- Interactive Drag Handle Divider -->
+            <div class="split-divider" id="split-divider">
+              <div class="divider-line"></div>
+              <div class="divider-handle">
+                <i data-lucide="chevrons-left-right"></i>
+              </div>
+            </div>
+
+            <!-- Real-time Spectral Pixel Inspector HUD Overlay -->
+            <div class="pixel-inspector-hud" id="pixel-inspector">
+              <div class="inspector-header">PIXEL SPECTRAL PROBE</div>
+              <div class="inspector-grid">
+                <div><span>Baseline NDVI:</span> <strong id="probe-baseline">0.78</strong></div>
+                <div><span>Current NDVI:</span> <strong id="probe-current" class="text-red">0.41</strong></div>
+                <div><span>Δ NDVI Delta:</span> <strong id="probe-delta" class="text-red">-47.4%</strong></div>
+                <div><span>Class:</span> <strong id="probe-class" class="text-amber">Canopy Felling</strong></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Telemetry Banner of Comparator -->
+          <div class="comparator-metrics-bar">
+            <div class="comp-stat-item">
+              <span class="comp-label">HISTORICAL BASELINE NDVI</span>
+              <span class="comp-val text-green" id="stat-comp-base-ndvi">0.78</span>
+              <span class="comp-sub">Dense Canopy Baseline</span>
+            </div>
+            <div class="comp-stat-arrow">→</div>
+            <div class="comp-stat-item">
+              <span class="comp-label">CURRENT OBSERVATION NDVI</span>
+              <span class="comp-val text-red" id="stat-comp-curr-ndvi">0.41</span>
+              <span class="comp-sub">Active Disturbance</span>
+            </div>
+            <div class="comp-stat-arrow">→</div>
+            <div class="comp-stat-item highlight-red">
+              <span class="comp-label">MEASURED VEGETATION DROP</span>
+              <span class="comp-val text-red" id="stat-comp-delta-ndvi">-47.4%</span>
+              <span class="comp-sub">Severe Canopy Depletion</span>
+            </div>
+            <div class="comp-stat-item">
+              <span class="comp-label">DEFORESTATION PROBABILITY</span>
+              <span class="comp-val text-amber" id="stat-comp-prob">94.2%</span>
+              <span class="comp-sub">Multi-Signal Validated</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: MULTI-SIGNAL INTELLIGENCE & FALSE POSITIVE ELIMINATION -->
+  <section class="app-section" id="intelligence-section">
+    <div class="container">
+      
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="cpu"></i>
+          <span>SCIENTIFIC RIGOR & VALIDATION</span>
+        </div>
+        <h2 class="section-title">WHY VEGETATION LOSS ≠ DEFORESTATION</h2>
+        <p class="section-desc">
+          A drop in single-band NDVI can occur from seasonal leaf drop, drought, storm defoliation, or agricultural harvests. ForestWatch executes a 5-vector multi-signal fusion pipeline to isolate true anthropogenic deforestation with scientific precision.
+        </p>
+      </div>
+
+      <!-- Multi-Signal Pipeline Cards Grid -->
+      <div class="intelligence-grid">
+        
+        <!-- Signal 1: NDVI -->
+        <div class="signal-card active">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">VECTOR 01 // NDVI</span>
+          </div>
+          <div class="signal-body">
+            <div class="signal-title">Normalized Difference Vegetation Index</div>
+            <div class="signal-formula">NDVI = (NIR - Red) / (NIR + Red)</div>
+            <p class="signal-desc">
+              Measures chlorophyll absorption and photosynthetic vigor. A rapid drop indicates canopy biomass reduction.
+            </p>
+            <div class="signal-result-box warning">
+              <div class="res-row"><span>Baseline:</span> <strong>0.78</strong></div>
+              <div class="res-row"><span>Current:</span> <strong class="text-red">0.41</strong></div>
+              <div class="res-tag red">Canopy Anomaly Tripped</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signal 2: EVI -->
+        <div class="signal-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">VECTOR 02 // EVI</span>
+          </div>
+          <div class="signal-body">
+            <div class="signal-title">Enhanced Vegetation Index</div>
+            <div class="signal-formula">EVI = 2.5 × ((NIR - Red) / (NIR + C₁Red - C₂Blue + L))</div>
+            <p class="signal-desc">
+              Corrects for atmospheric aerosols and high-biomass canopy saturation, validating deep tropical rainforest changes.
+            </p>
+            <div class="signal-result-box warning">
+              <div class="res-row"><span>Atmosphere Corr:</span> <strong>Pass</strong></div>
+              <div class="res-row"><span>Canopy Drop:</span> <strong class="text-red">-42.8%</strong></div>
+              <div class="res-tag red">Structural Loss Confirmed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signal 3: NBR (Wildfire Rejection) -->
+        <div class="signal-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">VECTOR 03 // NBR (FIRE REJECTION)</span>
+          </div>
+          <div class="signal-body">
+            <div class="signal-title">Normalized Burn Ratio</div>
+            <div class="signal-formula">NBR = (NIR - SWIR) / (NIR + SWIR)</div>
+            <p class="signal-desc">
+              Distinguishes mechanical deforestation from wildfire burn scars. Post-fire SWIR reflectivity spikes; mechanical clearing retains soil signature.
+            </p>
+            <div class="signal-result-box success">
+              <div class="res-row"><span>Burn Index (dNBR):</span> <strong>0.04 (Negligible)</strong></div>
+              <div class="res-row"><span>Fire Classifier:</span> <strong class="text-green">NO FIRE DETECTED</strong></div>
+              <div class="res-tag green">Mechanical Clearing Confirmed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signal 4: NDWI (Drought Rejection) -->
+        <div class="signal-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">VECTOR 04 // NDWI (DROUGHT REJECTION)</span>
+          </div>
+          <div class="signal-body">
+            <div class="signal-title">Normalized Difference Water Index</div>
+            <div class="signal-formula">NDWI = (NIR - SWIR) / (NIR + SWIR)</div>
+            <p class="signal-desc">
+              Analyzes regional canopy moisture stress. Regional drought shows widespread subtle drops; illegal felling creates sharp localized boundaries.
+            </p>
+            <div class="signal-result-box success">
+              <div class="res-row"><span>Regional Moisture:</span> <strong>Normal (+1.2%)</strong></div>
+              <div class="res-row"><span>Anomaly Edge:</span> <strong class="text-red">Sharp Boundary</strong></div>
+              <div class="res-tag green">Drought False Positive Excluded</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signal 5: Sentinel-1 SAR Radar -->
+        <div class="signal-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">VECTOR 05 // SAR C-BAND RADAR</span>
+          </div>
+          <div class="signal-body">
+            <div class="signal-title">Sentinel-1 Synthetic Aperture Radar</div>
+            <div class="signal-formula">Radar Backscatter (VH / VV Polarizations)</div>
+            <p class="signal-desc">
+              Microwaves penetrate heavy monsoon clouds to directly measure 3D volumetric tree trunk and branch mass backscatter.
+            </p>
+            <div class="signal-result-box warning">
+              <div class="res-row"><span>Cloud Penetration:</span> <strong>100%</strong></div>
+              <div class="res-row"><span>Volume Backscatter:</span> <strong class="text-red">-5.4 dB (Loss)</strong></div>
+              <div class="res-tag red">Trunk Volume Removal Verified</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signal 6: Spatial Morphology & Road Incursion -->
+        <div class="signal-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">VECTOR 06 // ROAD MORPHOLOGY</span>
+          </div>
+          <div class="signal-body">
+            <div class="signal-title">Spatial Pattern & Road Proximity</div>
+            <div class="signal-formula">Linear Kernel Filter & Edge Gradient</div>
+            <p class="signal-desc">
+              Discriminates natural diffuse treefall from anthropogenic logging tracks, road branches, and agricultural perimeter expansions.
+            </p>
+            <div class="signal-result-box warning">
+              <div class="res-row"><span>Geometric Linearity:</span> <strong class="text-red">94% Match</strong></div>
+              <div class="res-row"><span>Illegal Access Spur:</span> <strong class="text-red">1.4 km Trail</strong></div>
+              <div class="res-tag red">Anthropogenic Access Confirmed</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Interactive Deforestation Risk Model Formula Calculator -->
+      <div class="risk-model-container">
+        <div class="card-mac-header">
+          <div class="mac-dots">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+          </div>
+          <span class="mac-title">DEFORESTATION RISK SCORE COMPOSITE MODEL (0 - 100)</span>
+          <span class="badge-pill sm">SCIENTIFICALLY WEIGHTED</span>
+        </div>
+
+        <div class="risk-model-body">
+          <div class="risk-model-info">
+            <h3>DYNAMIC WEIGHTED RISK CALCULATION</h3>
+            <p>
+              Each environmental and geospatial vector contributes to the final Deforestation Risk Score according to its validated empirical significance. Adjust parameters to simulate model response under different conditions:
+            </p>
+            
+            <div class="risk-formula-box">
+              <code>Risk Score = (Vegetation Loss × 0.40) + (Forest Cover Change × 0.25) + (Historical Trend × 0.15) + (Land-Use Road Change × 0.15) + (Multi-pass Persistence × 0.05)</code>
+            </div>
+          </div>
+
+          <div class="risk-sliders-grid">
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Vegetation Loss (NDVI/EVI)</span>
+                <strong id="val-weight-veg">92%</strong>
+                <span class="slider-w">(Weight: 40%)</span>
+              </div>
+              <input type="range" class="custom-range" id="range-veg" min="0" max="100" value="92">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Forest Cover Structural Change (SAR)</span>
+                <strong id="val-weight-cover">85%</strong>
+                <span class="slider-w">(Weight: 25%)</span>
+              </div>
+              <input type="range" class="custom-range" id="range-cover" min="0" max="100" value="85">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Historical Multi-year Decline Trend</span>
+                <strong id="val-weight-trend">78%</strong>
+                <span class="slider-w">(Weight: 15%)</span>
+              </div>
+              <input type="range" class="custom-range" id="range-trend" min="0" max="100" value="78">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Land-Use Incursion / Logging Track</span>
+                <strong id="val-weight-land">88%</strong>
+                <span class="slider-w">(Weight: 15%)</span>
+              </div>
+              <input type="range" class="custom-range" id="range-land" min="0" max="100" value="88">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Multi-Observation Temporal Persistence</span>
+                <strong id="val-weight-persist">95%</strong>
+                <span class="slider-w">(Weight: 5%)</span>
+              </div>
+              <input type="range" class="custom-range" id="range-persist" min="0" max="100" value="95">
+            </div>
+          </div>
+
+          <!-- Dynamic Output Display -->
+          <div class="risk-score-result-card">
+            <div class="result-score-number" id="calc-final-score">87.1</div>
+            <div class="result-score-tier text-red" id="calc-final-tier">CRITICAL HOTSPOT</div>
+            <div class="result-score-action">Priority 1: Immediate Field Verification Dispatched</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: TEMPORAL ANALYSIS & WEEKLY DISTURBANCE PROGRESSION -->
+  <section class="app-section section-darker" id="timeline-section">
+    <div class="container">
+      
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="clock"></i>
+          <span>TEMPORAL ESCALATION TRACKER</span>
+        </div>
+        <h2 class="section-title">TEMPORAL ANALYSIS & DISTURBANCE PROGRESSION</h2>
+        <p class="section-desc">
+          Instead of analyzing static snapshots, ForestWatch tracks the sequential evolution of canopy disturbance over time. See how subtle weekly anomalies escalate into confirmed critical clearings.
+        </p>
+      </div>
+
+      <div class="temporal-layout-grid">
+        
+        <!-- Left: 4-Week Early Warning Escalation Simulator -->
+        <div class="temporal-stepper-card">
+          <div class="card-mac-header">
+            <div class="mac-dots">
+              <span class="mac-dot red"></span>
+              <span class="mac-dot yellow"></span>
+              <span class="mac-dot green"></span>
+            </div>
+            <span class="mac-title">WEEKLY DISTURBANCE SEQUENCE (JUNE - AUGUST 2026)</span>
+            <div class="stepper-controls">
+              <button class="btn-step-play" id="btn-play-sequence"><i data-lucide="play"></i> AUTO-PLAY</button>
+            </div>
+          </div>
+
+          <div class="stepper-body">
+            
+            <!-- Step Navigation Tabs -->
+            <div class="week-tabs-bar">
+              <button class="week-tab-btn" data-step="1">
+                <span class="w-step">WEEK 1</span>
+                <span class="w-status green">NORMAL BASELINE</span>
+              </button>
+              <button class="week-tab-btn" data-step="2">
+                <span class="w-step">WEEK 2</span>
+                <span class="w-status yellow">SUBTLE VEG DECLINE</span>
+              </button>
+              <button class="week-tab-btn" data-step="3">
+                <span class="w-step">WEEK 3</span>
+                <span class="w-status orange">ROAD ENCROACHMENT</span>
+              </button>
+              <button class="week-tab-btn active" data-step="4">
+                <span class="w-step">WEEK 4</span>
+                <span class="w-status red">PERSISTENT CLEARING</span>
+              </button>
+            </div>
+
+            <!-- Active Step Visualizer & Explanation -->
+            <div class="week-display-box">
+              <div class="week-img-wrapper">
+                <img src="" id="week-step-img" alt="Sequential Disturbance Satellite Stage" class="week-stage-img">
+                <div class="week-badge-overlay" id="week-badge-overlay">WEEK 4: CONFIRMED CRITICAL LOSS</div>
+              </div>
+              <div class="week-text-info">
+                <h4 id="week-step-title">Week 4: Persistent Multi-Observation Deforestation</h4>
+                <p id="week-step-desc">
+                  Canopy loss now spans 342.8 contiguous hectares with multiple branch logging roads clearly visible in Sentinel-2 and confirmed by Sentinel-1 SAR backscatter. Multi-pass persistence confirms high-probability anthropogenic clear-cutting.
+                </p>
+                <div class="week-metrics-chips">
+                  <span class="metric-chip">NDVI: <strong id="week-chip-ndvi" class="text-red">0.41</strong></span>
+                  <span class="metric-chip">Risk Score: <strong id="week-chip-risk" class="text-red">87 / 100</strong></span>
+                  <span class="metric-chip">Status: <strong id="week-chip-status" class="text-red">CRITICAL HOTSPOT</strong></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: 5-Year Historical Forest Trend Chart (2021 -> 2026) -->
+        <div class="temporal-chart-card">
+          <div class="card-mac-header">
+            <div class="mac-dots">
+              <span class="mac-dot red"></span>
+              <span class="mac-dot yellow"></span>
+              <span class="mac-dot green"></span>
+            </div>
+            <span class="mac-title">5-YEAR CANOPY TRAJECTORY (2021 → 2026)</span>
+            <span class="badge-pill sm">LONGITUDINAL TREND</span>
+          </div>
+
+          <div class="chart-body">
+            <div class="chart-canvas-box">
+              <canvas id="historical-trend-chart"></canvas>
+            </div>
+            <div class="chart-insights">
+              <div class="insight-row">
+                <i data-lucide="alert-circle" class="icon-sm text-red"></i>
+                <span><strong>Persistent Long-Term Decline:</strong> Region experienced -32.4% cumulative forest cover reduction over 5 consecutive years, ruling out seasonal phenology.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 5: AI EXPLANATION & GROUNDED REASONING TERMINAL -->
+  <section class="app-section" id="ai-section">
+    <div class="container">
+      
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="sparkles"></i>
+          <span>TRANSPARENT REASONING ENGINE</span>
+        </div>
+        <h2 class="section-title">AI-POWERED DISTURBANCE EXPLANATION</h2>
+        <p class="section-desc">
+          ForestWatch does not generate random claims. It feeds exact multispectral measurements, spatial topology, and seasonal baselines into an ecological AI reasoning pipeline to explain exactly why an event was flagged.
+        </p>
+      </div>
+
+      <!-- AI Terminal Window (Cutoshi-Style Mac Box) -->
+      <div class="ai-terminal-card">
+        <div class="card-mac-header">
+          <div class="mac-dots">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+          </div>
+          <div class="ai-model-tag">
+            <i data-lucide="terminal"></i>
+            <span>FORESTWATCH ECOLOGICAL REASONING CORE v4.2</span>
+          </div>
+          <div class="ai-speech-control">
+            <button class="btn-cutoshi btn-speech" id="btn-speak-ai">
+              <i data-lucide="volume-2"></i>
+              <span id="speech-btn-label">SPEAK EXPLANATION</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="ai-terminal-body">
+          
+          <!-- Live Telemetry Stream Input Block -->
+          <div class="ai-input-stream">
+            <div class="stream-title">INPUT TELEMETRY PAYLOAD TO AI REASONING CORE:</div>
+            <pre class="telemetry-json" id="ai-telemetry-json">
+{
+  "hotspot_id": "HG-WG-04",
+  "location": "Silent Valley Buffer Zone, Western Ghats",
+  "coordinates": [11.134, 76.432],
+  "spectral_metrics": {
+    "baseline_ndvi": 0.78,
+    "current_ndvi": 0.41,
+    "delta_ndvi_pct": -47.4,
+    "evi_drop_pct": -42.8,
+    "dnbr_fire_score": 0.04,
+    "ndwi_moisture_status": "NORMAL_SURROUNDING",
+    "sar_cband_drop_db": -5.4
+  },
+  "temporal_persistence": "4_WEEKS_CONSECUTIVE",
+  "morphology": "LINEAR_INCURSION_ROAD_1.4KM",
+  "habitat_reserve_distance_km": 1.2,
+  "species_at_risk": ["Lion-tailed Macaque", "Nilgiri Tahr"]
+}
+            </pre>
+          </div>
+
+          <!-- Synthesized AI Explanation Output -->
+          <div class="ai-explanation-output">
+            <div class="ai-verdict-header">
+              <div class="verdict-status-pill">
+                <span class="pulse-dot red"></span>
+                <span>AI SYNTHESIS: HIGH CONFIDENCE DEFORESTATION DETECTED</span>
+              </div>
+              <div class="verdict-time" id="ai-verdict-timestamp">Analyzed: August 27, 2026 • Pass Sentinel-2B</div>
+            </div>
+
+            <div class="ai-text-content" id="ai-explanation-text">
+              <p class="ai-p">
+                <strong>1. Anomaly Identification:</strong> Multispectral observation of the <em>Silent Valley Buffer Zone</em> reveals a severe <strong>47.4% decrease in NDVI</strong> (0.78 → 0.41) alongside a <strong>42.8% reduction in EVI</strong> across a contiguous 342.8-hectare polygon.
+              </p>
+              <p class="ai-p">
+                <strong>2. Elimination of Environmental Confounders:</strong> The Normalized Burn Ratio (dNBR 0.04) confirms <em>no thermal or fire anomalies</em>. Concurrently, regional NDWI moisture metrics across adjacent baseline plots remain healthy (+1.2%), conclusively ruling out drought or seasonal deciduous defoliation.
+              </p>
+              <p class="ai-p">
+                <strong>3. Anthropogenic Pattern Verification:</strong> Spatial gradient morphology identifies a newly carved <strong>1.4 km linear road spur</strong> branching from the southern perimeter into the canopy. Sentinel-1 SAR C-band radar reveals a <strong>-5.4 dB volumetric backscatter decline</strong>, confirming physical tree trunk and branch removal under cloud canopy.
+              </p>
+              <p class="ai-p">
+                <strong>4. Ecological Impact Assessment:</strong> This disturbance is located <strong>1.2 km from the core Silent Valley National Park boundary</strong>, directly bisecting a recognized migratory corridor for the endangered <em>Lion-tailed Macaque</em> and <em>Nilgiri Tahr</em>.
+              </p>
+            </div>
+
+            <!-- Recommendation Summary Box -->
+            <div class="ai-recommendation-box">
+              <div class="rec-title"><i data-lucide="shield-alert" class="text-red"></i> RECOMMENDED OPERATIONAL ACTION:</div>
+              <div class="rec-desc">
+                <strong>IMMEDIATE FIELD VERIFICATION (PRIORITY 1)</strong>: Dispatch rapid-response forestry inspection team and autonomous drone reconnaissance to coordinates <code>11.134° N, 76.432° E</code>. Issue temporary halt order on all logging transport within a 5 km perimeter.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 6: INTERVENTION PROTOCOLS & DECISION SUPPORT -->
+  <section class="app-section section-darker" id="action-section">
+    <div class="container">
+      
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="shield-check"></i>
+          <span>DECISION SUPPORT SYSTEM</span>
+        </div>
+        <h2 class="section-title">INTERVENTION RECOMMENDATION & ACTION PROTOCOLS</h2>
+        <p class="section-desc">
+          ForestWatch closes the loop from detection to protection. It generates automated operational dispatches, coordinates ranger patrols, and transmits instant geo-tagged boundary alerts to environmental authorities.
+        </p>
+      </div>
+
+      <!-- Action Protocol Grid -->
+      <div class="action-protocols-grid">
+        
+        <!-- Action 1: Drone & Ranger Dispatch -->
+        <div class="protocol-card urgent">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">TIER 1 // RAPID RESPONSE DISPATCH</span>
+          </div>
+          <div class="protocol-body">
+            <div class="protocol-icon-title">
+              <div class="proto-icon red"><i data-lucide="navigation"></i></div>
+              <div>
+                <h4>UAV & Ground Patrol Vector</h4>
+                <span class="proto-sub">Target ETA: &lt; 4 Hours • Priority High</span>
+              </div>
+            </div>
+            <ul class="proto-checklist">
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Auto-generate GPS Waypoints for Forestry Rangers</li>
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Task automated aerial drone surveillance for optical aerial video</li>
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Checkpoint intercept on Southern Ridge Access Trail</li>
+            </ul>
+            <button class="btn-cutoshi btn-urgent w-100 btn-proto-dispatch" data-proto="ranger">
+              <i data-lucide="send"></i>
+              <span>TRANSMIT DISPATCH PACKET</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action 2: Forest Department Alert Broadcast -->
+        <div class="protocol-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">TIER 2 // REGULATORY INJUNCTION</span>
+          </div>
+          <div class="protocol-body">
+            <div class="protocol-icon-title">
+              <div class="proto-icon amber"><i data-lucide="file-check"></i></div>
+              <div>
+                <h4>State Wildlife Warden Brief</h4>
+                <span class="proto-sub">Regulatory Action Notice (Sec 27 Wildlife Protection Act)</span>
+              </div>
+            </div>
+            <ul class="proto-checklist">
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Transmit formal Deforestation Disturbance Dossier</li>
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Request immediate satellite re-tasking (PlanetScope 3m)</li>
+              <li><i data-lucide="check-circle-2" class="text-green"></i> File boundary infringement report with District Magistrate</li>
+            </ul>
+            <button class="btn-cutoshi btn-secondary w-100 btn-proto-dispatch" data-proto="warden">
+              <i data-lucide="mail"></i>
+              <span>TRANSMIT DOSSIER TO WARDEN</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action 3: Community & NGO Alert -->
+        <div class="protocol-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">TIER 3 // INDIGENOUS & COMMUNITY WATCH</span>
+          </div>
+          <div class="protocol-body">
+            <div class="protocol-icon-title">
+              <div class="proto-icon cyan"><i data-lucide="users"></i></div>
+              <div>
+                <h4>Community Vanguard Alert</h4>
+                <span class="proto-sub">Local Village Forest Councils & Eco-Development Committees</span>
+              </div>
+            </div>
+            <ul class="proto-checklist">
+              <li><i data-lucide="check-circle-2" class="text-green"></i> SMS / WhatsApp geo-alert to 42 registered forest guides</li>
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Community verification of illegal timber movement</li>
+              <li><i data-lucide="check-circle-2" class="text-green"></i> Real-time crowdsourced geo-photo evidence collection</li>
+            </ul>
+            <button class="btn-cutoshi btn-secondary w-100 btn-proto-dispatch" data-proto="community">
+              <i data-lucide="radio"></i>
+              <span>NOTIFY COMMUNITY WATCH</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 7: SIMULATION & CUSTOM REGION SCANNER SANDBOX -->
+  <section class="app-section" id="simulation-section">
+    <div class="container">
+      
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="sliders"></i>
+          <span>INTERACTIVE SANDBOX</span>
+        </div>
+        <h2 class="section-title">CUSTOM REGION SCANNER & PIPELINE SIMULATION</h2>
+        <p class="section-desc">
+          Test the entire end-to-end detection pipeline on custom forest coordinates. Select a preset scenario or enter custom coordinates to watch the multi-signal spectral analysis execute in real-time.
+        </p>
+      </div>
+
+      <div class="simulation-card">
+        <div class="card-mac-header">
+          <div class="mac-dots">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+          </div>
+          <span class="mac-title">SATELLITE SPECTRAL PIPELINE SIMULATOR</span>
+          <span class="badge-pill sm">INTERACTIVE RUNTIME</span>
+        </div>
+
+        <div class="simulation-body">
+          
+          <!-- Simulation Inputs -->
+          <div class="sim-inputs-grid">
+            <div class="sim-input-box">
+              <label><i data-lucide="map-pin" class="icon-xs"></i> Select Forest Test Scenario:</label>
+              <select id="sim-preset-select" class="custom-select">
+                <option value="scenario-silent-valley">Scenario A: Silent Valley Buffer (Illegal Logging Incursion)</option>
+                <option value="scenario-wayanad">Scenario B: Wayanad Sanctuary (Agriculture Perimeter Expansion)</option>
+                <option value="scenario-kudremukh">Scenario C: Kudremukh Foothills (New Road Track Disturbance)</option>
+                <option value="scenario-sundarbans">Scenario D: Sundarbans Mangrove (Cyclone Damage vs Deforestation)</option>
+                <option value="scenario-custom">Scenario E: Custom Coordinates Bounding Box</option>
+              </select>
+            </div>
+
+            <div class="sim-input-box">
+              <label><i data-lucide="satellite" class="icon-xs"></i> Satellite Constellation:</label>
+              <select id="sim-sensor-select" class="custom-select">
+                <option value="sentinel2">ESA Sentinel-2 Multispectral (10m Resolution)</option>
+                <option value="landsat9">NASA/USGS Landsat-9 OLI-2 (30m Resolution)</option>
+                <option value="planetscope">PlanetScope High-Res Constellation (3m Resolution)</option>
+                <option value="sentinel1-sar">Sentinel-1 C-Band SAR Radar (All-Weather)</option>
+              </select>
+            </div>
+
+            <div class="sim-action-box">
+              <button class="btn-cutoshi btn-primary w-100 btn-run-pipeline" id="btn-run-simulation">
+                <i data-lucide="play-circle"></i>
+                <span>EXECUTE 5-STEP PIPELINE</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Real-Time Processing Pipeline Progress Stages -->
+          <div class="pipeline-stages-container">
+            <div class="pipe-step" id="pipe-step-1">
+              <div class="step-circle">1</div>
+              <div class="step-info">
+                <div class="s-name">DATA INGESTION</div>
+                <div class="s-detail">Fetch Level-2A Orthorectified Surface Reflectance</div>
+              </div>
+              <div class="step-status">IDLE</div>
+            </div>
+
+            <div class="pipe-step" id="pipe-step-2">
+              <div class="step-circle">2</div>
+              <div class="step-info">
+                <div class="s-name">SPECTRAL INDICES</div>
+                <div class="s-detail">Compute NDVI, EVI, NBR, and NDWI Rasters</div>
+              </div>
+              <div class="step-status">IDLE</div>
+            </div>
+
+            <div class="pipe-step" id="pipe-step-3">
+              <div class="step-circle">3</div>
+              <div class="step-info">
+                <div class="s-name">MULTI-SIGNAL FILTER</div>
+                <div class="s-detail">Eliminate Fire Scars, Cloud Haze, and Drought Signals</div>
+              </div>
+              <div class="step-status">IDLE</div>
+            </div>
+
+            <div class="pipe-step" id="pipe-step-4">
+              <div class="step-circle">4</div>
+              <div class="step-info">
+                <div class="s-name">RISK CLASSIFIER</div>
+                <div class="s-detail">Execute Dynamic Weighted Composite Risk Model</div>
+              </div>
+              <div class="step-status">IDLE</div>
+            </div>
+
+            <div class="pipe-step" id="pipe-step-5">
+              <div class="step-circle">5</div>
+              <div class="step-info">
+                <div class="s-name">AI SYNTHESIS & DISPATCH</div>
+                <div class="s-detail">Formulate Evidence Dossier & Action Routing</div>
+              </div>
+              <div class="step-status">IDLE</div>
+            </div>
+          </div>
+
+          <!-- Simulation Live Terminal Log -->
+          <div class="sim-terminal-log">
+            <div class="log-header">
+              <i data-lucide="terminal" class="icon-xs"></i>
+              <span>PIPELINE EXECUTION LOGS</span>
+            </div>
+            <div class="log-stream" id="sim-log-stream">
+              [SYSTEM] Ready for simulation. Select a scenario and press "EXECUTE 5-STEP PIPELINE" to begin...
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER (Cutoshi-Inspired Nature-Tech Footer) -->
+  <footer class="app-footer">
+    <div class="container footer-container">
+      <div class="footer-brand-col">
+        <div class="brand-logo">
+          <div class="logo-icon-box">
+            <svg class="tree-radar-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="14" stroke="#00f59b" stroke-width="2" stroke-dasharray="3 3"/>
+              <path d="M16 4L9 15h4v6h-3v5h12v-5h-3v-6h4L16 4z" fill="#00f59b"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">FOREST<span class="highlight">WATCH</span></span>
+            <span class="brand-sub">EARLY DEFORESTATION WARNING SYSTEM</span>
+          </div>
+        </div>
+        <p class="footer-desc">
+          An advanced AI and Earth-Observation decision-support platform designed to transition planetary forest conservation from reactive post-loss documentation to proactive early intervention.
+        </p>
+      </div>
+
+      <div class="footer-links-col">
+        <h4>DATA & ATTRIBUTIONS</h4>
+        <ul>
+          <li><a href="https://dataspace.copernicus.eu/" target="_blank">ESA Copernicus Sentinel-2 & Sentinel-1 SAR</a></li>
+          <li><a href="https://earthexplorer.usgs.gov/" target="_blank">NASA / USGS Landsat-9 OLI-2</a></li>
+          <li><a href="https://www.globalforestwatch.org/" target="_blank">Global Forest Watch (GFW / WRI)</a></li>
+          <li><a href="https://fsi.nic.in/" target="_blank">Forest Survey of India (FSI ISFR)</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h4>CORE CAPABILITIES</h4>
+        <ul>
+          <li><a href="#map-section">Multi-Spectral Radar Deck</a></li>
+          <li><a href="#comparator-section">Before/After Pixel Comparator</a></li>
+          <li><a href="#intelligence-section">Multi-Signal False Positive Engine</a></li>
+          <li><a href="#timeline-section">Temporal Disturbance Progression</a></li>
+          <li><a href="#ai-section">Ecological AI Reasoning Core</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-flex">
+        <div>© 2026 FORESTWATCH • Built for Global Planetary Protection & Environmental AI Hackathon</div>
+        <div class="footer-badge">EARLY WARNING ACTIVE // ZERO DELAY INTERVENTION</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL: EXECUTIVE REPORT & BRIEFING EXPORT -->
+  <div class="modal-backdrop" id="report-modal">
+    <div class="modal-card">
+      <div class="card-mac-header">
+        <div class="mac-dots">
+          <span class="mac-dot red" id="modal-close-dot"></span>
+          <span class="mac-dot yellow"></span>
+          <span class="mac-dot green"></span>
+        </div>
+        <span class="mac-title">EXECUTIVE FOREST DISTURBANCE DOSSIER</span>
+        <button class="btn-modal-close" id="btn-close-modal"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body" id="modal-printable-content">
+        <div class="report-header">
+          <div class="report-org">
+            <h2>FORESTWATCH // OFFICIAL DISTURBANCE DOSSIER</h2>
+            <div class="report-sub">STATE FOREST VIGILANCE WING & WILDLIFE AUTHORITY</div>
+          </div>
+          <div class="report-meta-box">
+            <div><strong>DOSSIER ID:</strong> #DOS-2026-0827-04</div>
+            <div><strong>DATE ISSUED:</strong> August 27, 2026</div>
+            <div><strong>PRIORITY:</strong> <span class="text-red font-bold">🔴 TIER 1 - URGENT ACTION</span></div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h3>1. TARGET SUMMARY & LOCATION</h3>
+          <table class="report-table">
+            <tr>
+              <td><strong>Monitored Region:</strong></td>
+              <td id="rep-name">Silent Valley Buffer Zone, Western Ghats</td>
+              <td><strong>Coordinates:</strong></td>
+              <td id="rep-coords">11.134° N, 76.432° E</td>
+            </tr>
+            <tr>
+              <td><strong>Threat Classification:</strong></td>
+              <td class="text-red font-bold" id="rep-tier">CRITICAL HOTSPOT (Risk Score 87/100)</td>
+              <td><strong>Detection Confidence:</strong></td>
+              <td class="text-green font-bold" id="rep-conf">91.4% (Multi-Pass Verified)</td>
+            </tr>
+            <tr>
+              <td><strong>Canopy Cover Delta:</strong></td>
+              <td class="text-red font-bold" id="rep-cover">-18.4% (342.8 Hectares)</td>
+              <td><strong>Distance to Reserve Core:</strong></td>
+              <td id="rep-prox">1.2 km (Critical Buffer Corridor)</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="report-section">
+          <h3>2. EMPIRICAL MULTI-SIGNAL SPECTRAL EVIDENCE</h3>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Spectral Indicator</th>
+                <th>Baseline Value</th>
+                <th>Current Value</th>
+                <th>Calculated Delta</th>
+                <th>Diagnostic Interpretation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NDVI (Canopy Vigor)</td>
+                <td>0.78</td>
+                <td>0.41</td>
+                <td class="text-red font-bold">-47.4%</td>
+                <td>Severe canopy depletion</td>
+              </tr>
+              <tr>
+                <td>EVI (Enhanced Index)</td>
+                <td>0.65</td>
+                <td>0.37</td>
+                <td class="text-red font-bold">-42.8%</td>
+                <td>Atmospheric scatter corrected</td>
+              </tr>
+              <tr>
+                <td>NBR (Normalized Burn)</td>
+                <td>0.62</td>
+                <td>0.58</td>
+                <td class="text-green">dNBR 0.04</td>
+                <td><strong>NO FIRE</strong> (Mechanical clearing confirmed)</td>
+              </tr>
+              <tr>
+                <td>NDWI (Canopy Moisture)</td>
+                <td>0.44</td>
+                <td>0.45</td>
+                <td class="text-green">+1.2%</td>
+                <td><strong>NO DROUGHT</strong> (Localized sharp boundary)</td>
+              </tr>
+              <tr>
+                <td>Sentinel-1 SAR Radar</td>
+                <td>-12.1 dB</td>
+                <td>-17.5 dB</td>
+                <td class="text-red font-bold">-5.4 dB</td>
+                <td>Physical trunk/branch mass removed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="report-section">
+          <h3>3. AI ECOLOGICAL REASONING VERDICT</h3>
+          <p class="report-p" id="rep-ai-text">
+            Multi-spectral Sentinel-2 and Sentinel-1 SAR observations confirm a high-probability anthropogenic clear-cutting event spanning 342.8 hectares in the Silent Valley Buffer. A 1.4 km linear access spur was carved into the core habitat. Wildfire and drought false positives have been mathematically excluded.
+          </p>
+        </div>
+
+        <div class="report-section">
+          <h3>4. MANDATED INTERVENTION DIRECTIVES</h3>
+          <div class="directive-box">
+            <div class="directive-item"><strong>DIRECTIVE 01:</strong> Dispatch rapid-response ranger ground team with GPS coordinates <code>11.134° N, 76.432° E</code>.</div>
+            <div class="directive-item"><strong>DIRECTIVE 02:</strong> Launch UAV aerial video reconnaissance along the southern perimeter trail.</div>
+            <div class="directive-item"><strong>DIRECTIVE 03:</strong> Establish checkpoint on timber transit roads leading to National Highway 966.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cutoshi btn-secondary" id="btn-print-report">
+          <i data-lucide="printer"></i>
+          <span>PRINT / SAVE AS PDF</span>
+        </button>
+        <button class="btn-cutoshi btn-primary" id="btn-dismiss-modal">
+          <i data-lucide="check"></i>
+          <span>ACKNOWLEDGE & CLOSE</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet & JS Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Application Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/comparator.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/simulation.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Initialize Lucide Icons after DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
