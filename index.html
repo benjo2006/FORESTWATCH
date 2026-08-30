@@ -83,7 +83,9 @@
         <a href="#timeline-section" class="nav-link"><i data-lucide="clock"></i> Temporal Trends</a>
         <a href="#ai-section" class="nav-link"><i data-lucide="cpu"></i> AI Explanation</a>
         <a href="#action-section" class="nav-link"><i data-lucide="shield-alert"></i> Action Protocols</a>
+        <a href="#upload-section" class="nav-link"><i data-lucide="upload-cloud"></i> Image Analysis</a>
       </div>
+
 
       <!-- Header Action Buttons -->
       <div class="nav-cta-wrap">
@@ -1031,7 +1033,129 @@
     </div>
   </section>
 
-  <!-- SECTION 7: SIMULATION & CUSTOM REGION SCANNER SANDBOX -->
+  <!-- SECTION 7: SATELLITE IMAGE UPLOAD & COMPUTER VISION ANALYSIS -->
+  <section class="app-section" id="upload-section">
+    <div class="container">
+
+      <div class="section-title-wrap">
+        <div class="badge-pill">
+          <i data-lucide="upload-cloud"></i>
+          <span>IMAGE ANALYSIS</span>
+        </div>
+        <h2 class="section-title">SATELLITE IMAGE UPLOAD &amp; CV ANALYSIS</h2>
+        <p class="section-desc">
+          Upload any satellite image (RGB PNG/JPEG/GeoTIFF) to run real computer vision analysis.
+          The engine computes per-pixel NDVI using the RGBi method, applies Otsu's global thresholding,
+          detects deforestation boundaries with a Laplacian edge kernel, and identifies distinct disturbance
+          patches via BFS connected-component labelling.
+        </p>
+      </div>
+
+      <div class="upload-cv-grid">
+
+        <!-- Upload & Controls -->
+        <div class="upload-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">IMAGE INPUT // COMPUTER VISION ENGINE</span>
+          </div>
+          <div class="upload-body">
+
+            <!-- Drop Zone -->
+            <label class="upload-dropzone" for="satellite-image-upload" id="upload-dropzone" tabindex="0" aria-label="Drop zone for satellite image upload">
+              <div class="dropzone-icon">
+                <i data-lucide="satellite"></i>
+              </div>
+              <div class="dropzone-text">
+                <strong>Drop satellite image here</strong>
+                <span>or click to browse files</span>
+                <span class="dropzone-hint">Supports PNG, JPEG, WebP, GeoTIFF (RGB bands)</span>
+              </div>
+              <input type="file" id="satellite-image-upload" accept="image/*" class="upload-hidden-input" aria-label="Upload satellite image for analysis">
+            </label>
+
+            <!-- Preview Canvas -->
+            <div class="upload-preview-wrap" id="upload-preview-wrap" style="display:none;">
+              <div class="preview-label">UPLOADED IMAGE PREVIEW</div>
+              <canvas id="upload-preview-canvas" class="upload-preview-canvas"></canvas>
+              <div class="preview-meta" id="upload-preview-meta"></div>
+            </div>
+
+            <!-- Algorithm Selector -->
+            <div class="cv-algo-options">
+              <div class="cv-option-label">ANALYSIS MODE:</div>
+              <div class="cv-option-group">
+                <label class="cv-radio-label">
+                  <input type="radio" name="cv-mode" value="full" checked> Full CV Pipeline (NDVI + Otsu + Laplacian + BFS)
+                </label>
+                <label class="cv-radio-label">
+                  <input type="radio" name="cv-mode" value="ndvi-only"> NDVI Distribution Only
+                </label>
+                <label class="cv-radio-label">
+                  <input type="radio" name="cv-mode" value="edge-only"> Edge Detection Only (Laplacian Kernel)
+                </label>
+              </div>
+            </div>
+
+            <button class="btn-cutoshi btn-primary w-100" id="btn-run-cv-analysis" disabled aria-label="Run computer vision analysis on uploaded image">
+              <i data-lucide="cpu"></i>
+              <span id="cv-btn-label">UPLOAD IMAGE FIRST</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CV Results Panel -->
+        <div class="cv-results-card" id="cv-results-card">
+          <div class="card-mac-header">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+            <span class="mac-title">CV ANALYSIS RESULTS // COMPUTED METRICS</span>
+          </div>
+          <div class="cv-results-body" id="cv-results-body">
+            <div class="cv-placeholder">
+              <i data-lucide="scan-line" class="cv-placeholder-icon"></i>
+              <p>Upload a satellite image and click <strong>RUN CV ANALYSIS</strong> to compute real pixel-level deforestation metrics.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NDVI Heatmap Output Canvas -->
+      <div class="cv-heatmap-wrap" id="cv-heatmap-wrap" style="display:none;">
+        <div class="card-mac-header">
+          <span class="mac-dot red"></span>
+          <span class="mac-dot yellow"></span>
+          <span class="mac-dot green"></span>
+          <span class="mac-title">NDVI HEATMAP OUTPUT // OTSU-THRESHOLDED VEGETATION MASK</span>
+        </div>
+        <div class="cv-heatmap-grid">
+          <div>
+            <div class="heatmap-label">Original Image</div>
+            <canvas id="cv-original-canvas" class="cv-canvas-output"></canvas>
+          </div>
+          <div>
+            <div class="heatmap-label">NDVI Heatmap (RGBi)</div>
+            <canvas id="cv-ndvi-canvas" class="cv-canvas-output"></canvas>
+          </div>
+          <div>
+            <div class="heatmap-label">Vegetation Mask (Otsu Threshold)</div>
+            <canvas id="cv-mask-canvas" class="cv-canvas-output"></canvas>
+          </div>
+          <div>
+            <div class="heatmap-label">Edge Detection (Laplacian)</div>
+            <canvas id="cv-edge-canvas" class="cv-canvas-output"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 8: SIMULATION & CUSTOM REGION SCANNER SANDBOX -->
   <section class="app-section" id="simulation-section">
     <div class="container">
       
@@ -1341,7 +1465,8 @@
   <!-- Leaflet & JS Scripts -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
-  <!-- Application Modules -->
+  <!-- Application Modules (cv-engine first — required by data.js and simulation.js) -->
+  <script src="js/cv-engine.js"></script>
   <script src="js/data.js"></script>
   <script src="js/map.js"></script>
   <script src="js/comparator.js"></script>

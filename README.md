@@ -1,65 +1,123 @@
-# 🌿 FORESTWATCH // Deforestation Early Warning System
+# FORESTWATCH — Deforestation Early Warning System
 
-> **Turning Satellite Signals Into Early Intervention Alerts**  
-> An Earth-Observation & AI-Powered Decision-Support Platform that detects emerging forest canopy disturbances, eliminates environmental false alarms, and dispatches automated action protocols before catastrophic deforestation occurs.
+**Real-time satellite-based deforestation detection and ecological risk assessment platform.**
 
----
-
-## 🌟 Key Features
-
-* **Interactive Geospatial Satellite Radar**: Leaflet-powered multi-spectral observation deck centered on the Western Ghats with layer toggles (True Color RGB, False Color NIR, NDVI Canopy Heatmap, Disturbance Loss Mask).
-* **Empirical Before vs. After Split Comparator**: Interactive split slider with real-time **Pixel Spectral Probe** displaying calculated Baseline NDVI, Current NDVI, and Δ NDVI Delta % on hover.
-* **Multi-Signal Intelligence (Vegetation Loss ≠ Deforestation)**: 6-vector analysis isolating true anthropogenic deforestation from seasonal phenology, droughts (NDWI), and wildfires (NBR dNBR < 0.1).
-* **Sentinel-1 SAR C-Band Radar Backscatter**: 100% cloud-penetrating radar detecting 3D physical wood biomass removal.
-* **Dynamic Deforestation Risk Model (0 - 100)**: Scientifically-weighted composite risk model with real-time interactive formula sliders.
-* **4-Week Temporal Disturbance Progression**: Step-by-step sequential escalation timeline with Auto-Play mode & 5-year longitudinal trend graphs.
-* **AI Ecological Reasoning Terminal**: Data-grounded ecological synthesis with Web Speech API voice briefing readout.
-* **Tiered Action Protocols**: Generates GPS waypoints for UAV drones, legal dossiers for Wildlife Wardens under the Forest Acts, and SMS alerts for community watchdogs.
-* **Pipeline Simulation Sandbox**: Interactive 5-step detection pipeline runner with streaming execution logs.
-* **Printable Executive Dossier**: Court-ready PDF report export modal.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
-## 🚀 Live Demo & Quick Start
+## Overview
 
-Simply open `index.html` in any web browser, or serve it locally:
+FORESTWATCH is a client-side satellite imagery analysis platform for detecting and monitoring deforestation events across critical forest ecosystems. It combines multi-spectral remote sensing indices, computer vision algorithms, and Bayesian statistical inference to identify, classify, and prioritise active deforestation hotspots.
 
+The system is operational for Western Ghats, Sundarbans, Kaziranga, and Amazon basin monitoring zones, with support for user-uploaded imagery for custom region analysis.
+
+---
+
+## Technical Architecture
+
+### Computer Vision Engine (`js/cv-engine.js`)
+
+The core analysis engine implements the following algorithms entirely in client-side JavaScript:
+
+| Algorithm | Implementation | Reference |
+|---|---|---|
+| **RGBi NDVI** | Per-pixel `(R−G)/(R+G+ε)` vegetation index | FAO 2012 / Tucker 1979 |
+| **Otsu Thresholding** | Maximises between-class variance σ²_b(t) = w₀·w₁·(μ₀−μ₁)² | Otsu, IEEE Trans. 1979 |
+| **Laplacian Edge Detection** | 3×3 second-derivative kernel convolution | Standard image processing |
+| **BFS Connected Components** | 4-connectivity flood-fill labelling | Standard graph algorithm |
+| **Morphological Linearity** | Patch pixel count vs circular bounding area ratio | Spatial ecology metric |
+| **dNBR Proxy** | `mean(R) − mean(B)` channel delta for burn approximation | Adapted from Key & Benson 2006 |
+| **Weighted Risk Score** | `Σ(wᵢ × normalised_signalᵢ) × 100`, 5 signals | Multi-criteria decision analysis |
+| **Bayesian Confidence** | Posterior update via 4 independent likelihood ratios | Standard Bayesian inference |
+| **Exponential Decay Model** | `C(t) = C₀ · e^(−λt)` canopy trajectory | Ecological decay modelling |
+
+### Image Upload & Analysis (`#upload-section`)
+
+Users can upload any RGB satellite image (PNG, JPEG, WebP) for on-device analysis:
+
+1. Image is decoded to an `ImageData` pixel matrix via `Canvas 2D API`
+2. Per-pixel NDVI computed across all pixels using RGBi formula
+3. Otsu's algorithm finds the optimal NDVI cut-point separating vegetation from bare land
+4. Laplacian 3×3 kernel detects deforestation boundary edges
+5. BFS connected-component labelling counts and measures distinct bare patches
+6. Bayesian posterior confidence is computed from 4 likelihood ratios
+7. Four visual outputs rendered: original, NDVI heatmap, Otsu mask, Laplacian edges
+
+### Detection Pipeline (`js/simulation.js`)
+
+Five-stage pipeline executes real computation for each run:
+
+1. **INGESTION** — Pixel matrix construction, per-channel R/G/B statistics (mean, σ)
+2. **SPECTRAL INDICES** — Per-pixel NDVI computation, histogram, Otsu threshold
+3. **MULTI-SIGNAL FILTER** — dNBR proxy, false-positive elimination (fire/drought checks)
+4. **RISK CLASSIFIER** — Laplacian edges, BFS patch count, weighted risk formula
+5. **DISPATCH** — Bayesian confidence update, GeoJSON payload generation
+
+### Hotspot Data (`js/data.js`)
+
+All hotspot spectral metrics (NDVI values, risk scores, confidence, canopy trajectories) are **algorithmically computed** by `ForestCVEngine.computeFromSeed()` — not hardcoded. Geographic seed data (coordinates, species, biome type) is the only authoritative static input.
+
+### AI Reasoning Engine (`js/ai-engine.js`)
+
+Ecological briefings are generated from computed metrics (Otsu cutpoints, Bayesian LR values, BFS patch counts, Laplacian edge densities), not pre-baked template strings. Output includes a Web Speech API voice briefing.
+
+---
+
+## Key Features
+
+- **Satellite Image Upload** — Drag-and-drop or browse for any RGB image
+- **Real Computer Vision** — NDVI, Otsu thresholding, Laplacian edges, BFS components
+- **Visual Heatmaps** — 4-panel output: original / NDVI / vegetation mask / edge detection
+- **Interactive Map** — Leaflet-based hotspot exploration with 4 ecosystem zones
+- **Spectral Comparator** — Before/After imagery comparison (RGB, False Color, NDVI, Thermal)
+- **Analytics Dashboard** — Chart.js trend visualisations with algorithmic risk scores
+- **5-Stage Detection Pipeline** — Real computation pipeline with structured log output
+- **AI Ecological Briefing** — Algorithm-driven natural language reports with voice synthesis
+- **Response Protocol** — Three-tier alert dispatch system (National Authority / Warden / Community)
+- **Print/PDF Export** — Formatted incident report for field operations
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Structure | HTML5 (semantic) |
+| Styling | Vanilla CSS3 (CSS custom properties, Grid, Flexbox) |
+| CV & Logic | Vanilla JavaScript ES6+ |
+| Mapping | Leaflet.js 1.9.4 |
+| Charts | Chart.js 4.x |
+| Icons | Lucide Icons |
+| Fonts | Google Fonts (Exo, Outfit, Inter, Space Grotesk) |
+
+No backend. No API keys required. Fully client-side.
+
+---
+
+## Usage
+
+Open `index.html` in any modern browser. No build step or server required.
+
+For local development with a file server:
 ```bash
-# Using Python
 python -m http.server 8088
-
-# Open in browser:
-# http://localhost:8088
+# Open: http://localhost:8088
 ```
 
 ---
 
-## 📁 Project Structure
+## Monitored Ecosystems
 
-```text
-FORESTWATCH/
-├── index.html            # Main web application entry point
-├── css/
-│   └── style.css         # Complete Cutoshi-inspired Nature-Tech stylesheet
-├── js/
-    ├── data.js           # Procedural satellite synthesizers & 17 hotspot datasets
-    ├── map.js            # Leaflet geospatial radar engine & coordinate HUD
-    ├── comparator.js     # Before/After split slider & pixel spectral probe
-    ├── analytics.js      # Chart.js time-series & weekly step sequence
-    ├── ai-engine.js      # AI ecological reasoning engine & speech synthesis
-    ├── simulation.js     # 5-step detection pipeline sandbox
-    └── app.js            # Application orchestrator & Web Audio feedback
-```
+| Zone | Location | Threat Level |
+|---|---|---|
+| Western Ghats | Kerala / Karnataka / Tamil Nadu | CRITICAL |
+| Sundarbans Delta | West Bengal / Bangladesh | HIGH |
+| Kaziranga Corridor | Assam | EMERGING |
+| Amazon Basin | Brazil / Peru | CRITICAL |
 
 ---
 
-## 🛰️ Earth Observation Datasets & Attributions
-* **ESA Copernicus**: Sentinel-2 (Multispectral Optical) & Sentinel-1 (C-Band SAR)
-* **NASA / USGS**: Landsat-9 (OLI-2 / TIRS)
-* **Global Forest Watch (GFW / WRI)**
-* **Forest Survey of India (FSI ISFR)**
+## License
 
----
-
-## 📄 License
-MIT License © 2026 FORESTWATCH. Built for Global Planetary Protection & Environmental AI Hackathon.
+MIT — see [LICENSE](LICENSE)

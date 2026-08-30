@@ -2828,3 +2828,306 @@ select:focus-visible {
     display: none;
   }
 }
+
+/* ==========================================================================
+   IMAGE UPLOAD & COMPUTER VISION ANALYSIS SECTION
+   ========================================================================== */
+
+/* Upload Section Layout */
+.upload-cv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .upload-cv-grid { grid-template-columns: 1fr; }
+}
+
+/* Upload Card */
+.upload-card,
+.cv-results-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.upload-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Drop Zone */
+.upload-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 2px dashed var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 36px 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: rgba(0, 245, 155, 0.03);
+  text-align: center;
+  position: relative;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone:focus {
+  border-color: var(--color-primary);
+  background: rgba(0, 245, 155, 0.07);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-primary-glow);
+}
+
+.upload-dropzone.drag-over {
+  border-color: var(--color-primary);
+  background: rgba(0, 245, 155, 0.12);
+  transform: scale(1.01);
+}
+
+.upload-dropzone.has-file {
+  border-color: var(--color-emerald);
+  border-style: solid;
+}
+
+.dropzone-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 245, 155, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.dropzone-icon svg { width: 28px; height: 28px; }
+
+.dropzone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.dropzone-text strong { color: var(--color-primary); font-size: 1rem; }
+.dropzone-text span   { color: var(--text-muted); font-size: 0.8rem; }
+.dropzone-hint        { font-size: 0.72rem !important; color: var(--text-dim) !important; }
+
+.upload-hidden-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* Image Preview */
+.upload-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.upload-preview-canvas {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.preview-meta {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+/* Algorithm Options */
+.cv-algo-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cv-option-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.cv-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cv-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.cv-radio-label:hover { color: var(--text-main); }
+
+.cv-radio-label input[type="radio"] {
+  accent-color: var(--color-primary);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* CV Results Panel */
+.cv-results-body {
+  padding: 20px;
+  min-height: 200px;
+}
+
+.cv-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 200px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.cv-placeholder-icon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.3;
+}
+
+.cv-placeholder p { font-size: 0.87rem; max-width: 280px; line-height: 1.6; }
+.cv-placeholder strong { color: var(--color-primary); }
+
+/* CV Metrics Grid */
+.cv-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1100px) {
+  .cv-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.cv-metric-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  transition: border-color 0.2s;
+}
+
+.cv-metric-card:hover { border-color: var(--border-card); }
+
+.cv-metric-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.cv-metric-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-main);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.cv-metric-unit {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.cv-metric-sub {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.cv-timestamp {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  text-align: right;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* NDVI Heatmap Output */
+.cv-heatmap-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.cv-heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 20px;
+}
+
+@media (max-width: 900px) {
+  .cv-heatmap-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+  .cv-heatmap-grid { grid-template-columns: 1fr; }
+}
+
+.heatmap-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.cv-canvas-output {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  display: block;
+  image-rendering: pixelated;
+}
+

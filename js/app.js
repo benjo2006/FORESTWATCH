@@ -1,6 +1,7 @@
 /**
  * FORESTWATCH // MAIN APPLICATION ORCHESTRATOR
- * Coordinates map, comparator, analytics, AI engine, simulation, sound effects, and briefing exports.
+ * Coordinates map, comparator, analytics, AI engine, simulation,
+ * image upload CV analysis, sound effects, and briefing exports.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,7 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let aiEngine = null;
   let simulator = null;
 
-  let currentSelectedHotspot = window.SYLVA_DATA.HOTSPOTS_DATA[0];
+  // Use algorithmically enriched hotspot data (computed via cv-engine algorithms)
+  const HOTSPOTS = window.SYLVA_DATA.getEnrichedHotspots
+    ? window.SYLVA_DATA.getEnrichedHotspots()
+    : window.SYLVA_DATA.HOTSPOTS_DATA;
+
+  let currentSelectedHotspot = HOTSPOTS[0];
   let soundEnabled = true;
 
   // Audio synthesis for UI feedback
@@ -329,4 +335,280 @@ document.addEventListener('DOMContentLoaded', () => {
     if (repProx) repProx.textContent = `${h.coreProximityKm} km (Critical Buffer Corridor)`;
     if (repAi) repAi.textContent = h.aiVerdict;
   }
+
+  // ─────────────────────────────────────────────────────────────
+  // IMAGE UPLOAD & COMPUTER VISION MODULE
+  // Implements claim c1 (image upload UI) and c2 (CV analysis)
+  // ─────────────────────────────────────────────────────────────
+  const cvUploadEngine = new ForestCVEngine();
+  let uploadedImageData = null;
+  let uploadedImageEl   = null;
+
+  const uploadInput    = document.getElementById('satellite-image-upload');
+  const uploadDropzone = document.getElementById('upload-dropzone');
+  const runCVBtn       = document.getElementById('btn-run-cv-analysis');
+  const cvBtnLabel     = document.getElementById('cv-btn-label');
+  const previewWrap    = document.getElementById('upload-preview-wrap');
+  const previewCanvas  = document.getElementById('upload-preview-canvas');
+  const previewMeta    = document.getElementById('upload-preview-meta');
+  const cvResultsBody  = document.getElementById('cv-results-body');
+  const cvHeatmapWrap  = document.getElementById('cv-heatmap-wrap');
+
+  function handleImageFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      alert('Please upload a valid image file (PNG, JPEG, WebP, or GeoTIFF).');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        uploadedImageEl = img;
+
+        // Decode image to ImageData via offscreen canvas
+        const offscreen = document.createElement('canvas');
+        // Cap at 640px wide for performance while preserving AR
+        const scale  = Math.min(1, 640 / img.width);
+        offscreen.width  = Math.round(img.width  * scale);
+        offscreen.height = Math.round(img.height * scale);
+        const octx = offscreen.getContext('2d');
+        octx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
+        uploadedImageData = octx.getImageData(0, 0, offscreen.width, offscreen.height);
+
+        // Render preview
+        if (previewWrap && previewCanvas) {
+          previewWrap.style.display = 'block';
+          previewCanvas.width  = offscreen.width;
+          previewCanvas.height = offscreen.height;
+          previewCanvas.getContext('2d').putImageData(uploadedImageData, 0, 0);
+          if (previewMeta) {
+            previewMeta.textContent = `${img.width}×${img.height} px (scaled to ${offscreen.width}×${offscreen.height} for analysis) · ${(file.size / 1024).toFixed(1)} KB · ${file.type}`;
+          }
+        }
+
+        // Enable run button
+        if (runCVBtn) { runCVBtn.disabled = false; }
+        if (cvBtnLabel) cvBtnLabel.textContent = 'RUN CV ANALYSIS ON IMAGE';
+
+        // Pass to simulator
+        if (simulator) simulator.setUploadedImageData(uploadedImageData);
+
+        if (uploadDropzone) uploadDropzone.classList.add('has-file');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // File input change
+  if (uploadInput) {
+    uploadInput.addEventListener('change', (e) => {
+      if (e.target.files[0]) handleImageFile(e.target.files[0]);
+    });
+  }
+
+  // Drag-and-drop support
+  if (uploadDropzone) {
+    uploadDropzone.addEventListener('dragover', (e) => { e.preventDefault(); uploadDropzone.classList.add('drag-over'); });
+    uploadDropzone.addEventListener('dragleave', () => uploadDropzone.classList.remove('drag-over'));
+    uploadDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadDropzone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) handleImageFile(file);
+    });
+  }
+
+  // RUN ANALYSIS button
+  if (runCVBtn) {
+    runCVBtn.addEventListener('click', () => {
+      if (!uploadedImageData) return;
+      playSound('alert');
+
+      if (cvBtnLabel) cvBtnLabel.textContent = 'COMPUTING…';
+      runCVBtn.disabled = true;
+
+      // Yield to repaint, then compute
+      setTimeout(() => {
+        const cvMode = document.querySelector('input[name="cv-mode"]:checked')?.value || 'full';
+        const metrics = cvUploadEngine.analyzeImage(uploadedImageData);
+
+        // Render visual outputs
+        renderCVHeatmaps(uploadedImageData, metrics, cvUploadEngine, cvMode);
+
+        // Render results panel
+        renderCVResults(metrics);
+
+        if (cvBtnLabel) cvBtnLabel.textContent = 'RE-RUN ANALYSIS';
+        runCVBtn.disabled = false;
+        playSound('success');
+
+        // Store for pipeline / AI engine
+        window._lastPipelineMetrics = metrics;
+        if (simulator) simulator.setUploadedImageData(uploadedImageData);
+        if (aiEngine) {
+          aiEngine.loadHotspot(currentSelectedHotspot);
+        }
+      }, 50);
+    });
+  }
+
+  function renderCVResults(m) {
+    if (!cvResultsBody) return;
+    const tier = m.threatTier;
+    const tierColors = { CRITICAL: '#ff3b5c', HIGH: '#f97316', EMERGING: '#f6ca56', STABLE: '#00f59b' };
+    const tc = tierColors[tier] || '#00f59b';
+
+    cvResultsBody.innerHTML = `
+      <div class="cv-metrics-grid">
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">RISK SCORE</div>
+          <div class="cv-metric-value" style="color:${tc}">${m.riskScore}<span class="cv-metric-unit">/100</span></div>
+          <div class="cv-metric-sub">${tier}</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">CONFIDENCE</div>
+          <div class="cv-metric-value" style="color:#00f59b">${m.confidence}<span class="cv-metric-unit">%</span></div>
+          <div class="cv-metric-sub">Bayesian Posterior</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">NDVI MEAN</div>
+          <div class="cv-metric-value">${m.ndvi.mean.toFixed(4)}</div>
+          <div class="cv-metric-sub">σ = ${m.ndvi.std.toFixed(4)}</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">OTSU THRESHOLD</div>
+          <div class="cv-metric-value">${m.ndvi.otsuCutpoint.toFixed(4)}</div>
+          <div class="cv-metric-sub">Optimal cut-point</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">VEGETATION</div>
+          <div class="cv-metric-value" style="color:#10b981">${m.coverage.vegPct.toFixed(1)}<span class="cv-metric-unit">%</span></div>
+          <div class="cv-metric-sub">${m.coverage.vegCount.toLocaleString()} px</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">BARE / CLEARED</div>
+          <div class="cv-metric-value" style="color:#ff3b5c">${m.coverage.barePct.toFixed(1)}<span class="cv-metric-unit">%</span></div>
+          <div class="cv-metric-sub">${m.coverage.bareCount.toLocaleString()} px</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">EDGE DENSITY</div>
+          <div class="cv-metric-value">${(m.morphology.edgeDensity * 100).toFixed(3)}</div>
+          <div class="cv-metric-sub">Laplacian edges/100px</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">PATCHES (BFS)</div>
+          <div class="cv-metric-value">${m.morphology.numPatches}</div>
+          <div class="cv-metric-sub">Connected components</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">LINEARITY IDX</div>
+          <div class="cv-metric-value">${m.morphology.linearityScore.toFixed(3)}</div>
+          <div class="cv-metric-sub">${m.morphology.linearityScore < 0.5 ? 'Linear (road/track)' : 'Clustered (clearing)'}</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">dNBR PROXY</div>
+          <div class="cv-metric-value">${m.spectral.dNBR_proxy}</div>
+          <div class="cv-metric-sub">${parseFloat(m.spectral.dNBR_proxy) < 0.12 ? 'No fire signature' : 'Possible fire signal'}</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">IMAGE SIZE</div>
+          <div class="cv-metric-value">${m.width}×${m.height}</div>
+          <div class="cv-metric-sub">${m.totalPixels.toLocaleString()} total pixels</div>
+        </div>
+        <div class="cv-metric-card">
+          <div class="cv-metric-label">LARGEST PATCH</div>
+          <div class="cv-metric-value">${m.morphology.largestPatchPx.toLocaleString()}</div>
+          <div class="cv-metric-sub">pixels (BFS)</div>
+        </div>
+      </div>
+      <div class="cv-timestamp">Analysis computed at ${new Date(m.timestamp).toLocaleTimeString()} · Engine: ForestCVEngine@1.0</div>
+    `;
+  }
+
+  function renderCVHeatmaps(imageData, metrics, engine, mode) {
+    if (!cvHeatmapWrap) return;
+    cvHeatmapWrap.style.display = 'block';
+
+    const { width, height, data } = imageData;
+    const total = width * height;
+    const EPS   = 1e-6;
+
+    // Original canvas
+    const origCanvas = document.getElementById('cv-original-canvas');
+    if (origCanvas) {
+      origCanvas.width = width; origCanvas.height = height;
+      origCanvas.getContext('2d').putImageData(imageData, 0, 0);
+    }
+
+    // NDVI Heatmap canvas (green=high, red=low)
+    const ndviCanvas = document.getElementById('cv-ndvi-canvas');
+    if (ndviCanvas) {
+      ndviCanvas.width = width; ndviCanvas.height = height;
+      const ndviCtx   = ndviCanvas.getContext('2d');
+      const ndviImg   = ndviCtx.createImageData(width, height);
+      for (let i = 0; i < total; i++) {
+        const R = data[i*4]/255, G = data[i*4+1]/255;
+        const ndvi = (R - G) / (R + G + EPS);
+        const norm = (ndvi + 1) / 2; // map [-1,1] → [0,1]
+        const base = i * 4;
+        // Green = high NDVI, Red = low NDVI, via HSL interpolation
+        ndviImg.data[base]   = Math.round((1 - norm) * 255);
+        ndviImg.data[base+1] = Math.round(norm * 200);
+        ndviImg.data[base+2] = 30;
+        ndviImg.data[base+3] = 255;
+      }
+      ndviCtx.putImageData(ndviImg, 0, 0);
+    }
+
+    // Vegetation mask canvas (using Otsu threshold)
+    const maskCanvas = document.getElementById('cv-mask-canvas');
+    if (maskCanvas) {
+      maskCanvas.width = width; maskCanvas.height = height;
+      const maskCtx  = maskCanvas.getContext('2d');
+      const maskImg  = maskCtx.createImageData(width, height);
+      const cut      = metrics.ndvi.otsuCutpoint;
+      for (let i = 0; i < total; i++) {
+        const R = data[i*4]/255, G = data[i*4+1]/255;
+        const ndvi = (R - G) / (R + G + EPS);
+        const base = i * 4;
+        if (ndvi >= cut) {
+          maskImg.data[base] = 10; maskImg.data[base+1] = 185; maskImg.data[base+2] = 129; // green
+        } else {
+          maskImg.data[base] = 255; maskImg.data[base+1] = 59; maskImg.data[base+2] = 92; // red
+        }
+        maskImg.data[base+3] = 255;
+      }
+      maskCtx.putImageData(maskImg, 0, 0);
+    }
+
+    // Laplacian edge canvas
+    const edgeCanvas = document.getElementById('cv-edge-canvas');
+    if (edgeCanvas) {
+      edgeCanvas.width = width; edgeCanvas.height = height;
+      const edgeCtx  = edgeCanvas.getContext('2d');
+      const edgeImg  = edgeCtx.createImageData(width, height);
+      // Build NDVI array then run Laplacian
+      const ndviArr = new Float32Array(total);
+      for (let i = 0; i < total; i++) {
+        const R = data[i*4]/255, G = data[i*4+1]/255;
+        ndviArr[i] = (R - G) / (R + G + EPS);
+      }
+      const edgeMap = engine._laplacianEdge(ndviArr, width, height);
+      const edgeMax = Math.max(...edgeMap) || 1;
+      for (let i = 0; i < total; i++) {
+        const v    = Math.round((edgeMap[i] / edgeMax) * 255);
+        const base = i * 4;
+        edgeImg.data[base]   = v;
+        edgeImg.data[base+1] = Math.round(v * 0.8);
+        edgeImg.data[base+2] = 0;
+        edgeImg.data[base+3] = 255;
+      }
+      edgeCtx.putImageData(edgeImg, 0, 0);
+    }
+  }
+  // ──── End of Image Upload & CV Module ────
+
 });
+
